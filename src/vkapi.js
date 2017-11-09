@@ -301,12 +301,18 @@ class VkApi {
         return response.text()
           .then(body => {
             const $          = cheerio.load(body);
-            const errorBlock = $('.service_msg_warning');
+            const loginErrorBlock   = $('.service_msg_warning');
+            const blockedErrorBlock = $('.login_blocked_panel');
 
-            if (errorBlock.length) {
+            if (loginErrorBlock.length) {
               throw new VkAuthError({
                 error:             'web_login_error',
-                error_description: errorBlock.text()
+                error_description: loginErrorBlock.text()
+              });
+            } else if (blockedErrorBlock.length) {
+              throw new VkAuthError({
+                error:             'web_login_error',
+                error_description: 'User is temporary blocked.'
               });
             }
 
